@@ -5,6 +5,5 @@
   "author": {
     "name": "VeriGlow",
     "url": "https://veri-glow.com"
-  },
-  "hooks": "./hooks/hooks.json"
+  }
 }
