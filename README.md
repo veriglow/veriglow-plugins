@@ -35,6 +35,29 @@ The same skills are also available as independent repos for any Agent Skills–c
 - [citeanything-skill](https://github.com/veriglow/citeanything-skill)
 - [agentmap-skill](https://github.com/veriglow/agentmap-skill)
 
+## Migrating from standalone skills
+
+If you previously installed `citeanything-skill` or `agentmap-skill` by cloning them into `~/.claude/skills/`, switch to the plugin for auto-save and easier updates:
+
+**1. Remove the old standalone skills**
+
+```bash
+rm -rf ~/.claude/skills/citeanything ~/.claude/skills/agentmap
+```
+
+**2. Install the plugin**
+
+```
+/plugin marketplace add veriglow/veriglow-plugins
+/plugin install veriglow@veriglow-plugins
+```
+
+**3. (Optional) Remove your manual Stop hook config**
+
+If you previously added a `Stop` hook to `~/.claude/settings.json` pointing to `citeanything-skill/hooks/save-history.sh`, remove that entry — the plugin registers the hook automatically.
+
+**Restart Claude Code.** You're done. Skills keep the same names (`citeanything`, `agentmap`) so any CLAUDE.md rules you wrote still apply.
+
 ## License
 
 [MIT](LICENSE)
