@@ -1,0 +1,10 @@
+{
+  "name": "veriglow",
+  "version": "0.1.0",
+  "description": "CiteAnything + AgentMap — verifiable citations and data extraction recipes for any website.",
+  "author": {
+    "name": "VeriGlow",
+    "url": "https://veri-glow.com"
+  },
+  "hooks": "./hooks/hooks.json"
+}

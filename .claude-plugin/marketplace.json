@@ -1,0 +1,14 @@
+{
+  "name": "veriglow-plugins",
+  "owner": {
+    "name": "VeriGlow",
+    "url": "https://veri-glow.com"
+  },
+  "plugins": [
+    {
+      "name": "veriglow",
+      "source": "./plugins/veriglow",
+      "description": "CiteAnything + AgentMap bundled for Claude Code — every claim backed by a clickable, verifiable source link, with automatic history logging."
+    }
+  ]
+}
