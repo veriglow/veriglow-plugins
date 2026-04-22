@@ -1,6 +1,0 @@
-[submodule "plugins/veriglow/skills/citeanything"]
-	path = plugins/veriglow/skills/citeanything
-	url = https://github.com/veriglow/citeanything-skill.git
-[submodule "plugins/veriglow/skills/agentmap"]
-	path = plugins/veriglow/skills/agentmap
-	url = https://github.com/veriglow/agentmap-skill.git
