@@ -8,7 +8,7 @@
     {
       "name": "veriglow",
       "source": "./plugins/veriglow",
-      "description": "CiteAnything + AgentMap bundled for Claude Code — every claim backed by a clickable, verifiable source link, with automatic history logging."
+      "description": "CiteAnything + AgentMap for Claude Code — replayable evidence citations, durable cited Works, data extraction recipes, and automatic history logging."
     }
   ]
 }

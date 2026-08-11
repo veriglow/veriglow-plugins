@@ -1,7 +1,7 @@
 {
   "name": "veriglow",
-  "version": "0.1.5",
-  "description": "CiteAnything + AgentMap — verifiable citations and data extraction recipes for any website.",
+  "version": "0.2.0",
+  "description": "CiteAnything + AgentMap — replayable citations, durable cited Works, and data extraction recipes for any website.",
   "author": {
     "name": "VeriGlow",
     "url": "https://veri-glow.com"

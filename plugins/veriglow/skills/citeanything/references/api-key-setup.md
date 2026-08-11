@@ -1,103 +1,73 @@
-# How to Get a CiteAnything API Key
+# CiteAnything authentication setup
 
-Guide the user through these steps:
+## Choose the site
 
-1. **Register or log in** at [citeanything.veri-glow.com](https://citeanything.veri-glow.com)
-2. **Generate an API key** — click "Generate API Key" in the sidebar (under "Take CiteAnything Skill Home")
-3. **Paste the key back here** — the user will provide it to you
+- International: `https://citeanything.app`
+- China: `https://citeanything.cn`
 
-The API key starts with `ca_` and does not expire. It grants access to:
-- **Citation creation** — create and store evidence citations
-- **KB document upload** — upload and convert PDFs
-- **Screenshot generation** — automatic evidence screenshots
+Set `CITEANYTHING_BASE_URL` only when using the China site or a custom deployment. The international site is the default.
 
-Once the user provides their API key, set it as an environment variable:
+## Generate the right key
+
+Log in, open **Take CiteAnything Home** in the account sidebar, and choose the action that matches the client:
+
+| Action | Local variable/client | Granted capability |
+|---|---|---|
+| **Generate Skill Key** | `CITEANYTHING_API_KEY` | `citation`, `kb`, `screenshot` |
+| **Connect SyncAnything** | `SYNCANYTHING_CITEANYTHING_API_KEY` | `context.read`, `works.read` |
+| **Connect CLI / TUI** | `citeanything auth connect` or `CITEANYTHING_CLI_API_KEY` | conversations, agent runs, Works, citations, and KB |
+
+Keys start with `ca_`, are shown in full only once, and can be revoked from the account. Never ask for the user's password. Do not paste a key into source code, a Work directory, chat output, or a committed environment file.
+
+## Configure the citation skill
+
+Set the Skill Key in the environment that launches the agent:
 
 ```bash
 export CITEANYTHING_API_KEY="ca_..."
+# Only for the China site:
+export CITEANYTHING_BASE_URL="https://citeanything.cn"
 ```
 
-Verify the key works:
+Verify without printing the key:
 
 ```bash
-curl -s "https://citeanything.veri-glow.com/api/auth/me" \
+CITEANYTHING_BASE="${CITEANYTHING_BASE_URL:-https://citeanything.app}"
+curl --fail-with-body -sS "$CITEANYTHING_BASE/api/auth/me" \
   -H "Authorization: Bearer $CITEANYTHING_API_KEY"
 ```
 
-If this returns user info, the key is valid and you can proceed with creating citations.
+If the response is HTTP 403 with a required scope, the wrong client key was supplied. Generate a Skill Key instead of broadening or reusing another key.
 
-## Enable Auto-Citations (Recommended)
+## Configure the CLI/TUI
 
-After the API key is set, ask the user if they'd like CiteAnything to automatically cite all web search results and data claims. If yes, guide them to add this line to their `~/.claude/CLAUDE.md`:
-
-```
-When answering questions that involve web search results or external data claims, always use the citeanything skill to create citations for key facts.
-```
-
-Tell the user they can do this by running:
+Prefer the hidden interactive connection flow:
 
 ```bash
-echo '\nWhen answering questions that involve web search results or external data claims, always use the citeanything skill to create citations for key facts.' >> ~/.claude/CLAUDE.md
+citeanything auth connect --site international
+citeanything auth status
 ```
 
-This makes every data-backed answer automatically verifiable — no need to manually invoke the skill each time.
+Use `--site china` for the China site. Native `auth connect` currently saves metadata under `~/.citeanything/connections.json` and stores its secret in macOS Keychain. On other platforms, or for non-interactive automation, inject `CITEANYTHING_CLI_API_KEY` through the secure runtime and optionally set `CITEANYTHING_BASE_URL`.
 
-## Enable Auto-Save History (Recommended)
+## Enable automatic skill use
 
-To deterministically save every answer and its citations, register the Stop hook shipped with this skill. Guide the user to add this to `~/.claude/settings.json` under `hooks`:
+If the user wants all externally grounded answers cited, add an instruction equivalent to this to the agent's durable project/user instructions:
 
-```json
-{
-  "hooks": {
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/skills/citeanything/hooks/save-history.sh"
-          }
-        ]
-      }
-    ]
-  }
-}
+```text
+When an answer uses web research or external factual claims, use the citeanything skill to create citations from inspected original sources.
 ```
 
-(Adjust the path if the skill was installed elsewhere, e.g. `.cursor/skills/citeanything/hooks/save-history.sh`.)
+Do not modify durable instructions without the user's approval.
 
-After each response, the hook reads the conversation transcript, extracts any `citeanything.veri-glow.com/e/*` citation URLs, and saves a timestamped record to `~/.citeanything/history/YYYY-MM-DD_HH-MM-SS.md`. Responses without citations are skipped.
+## Claude Code history hook
 
-The user can browse `~/.citeanything/history/` to review any past claim and its evidence.
+The VeriGlow plugin registers its Stop hook automatically. It saves the latest cited exchange to `${CITEANYTHING_HISTORY_DIR:-~/.citeanything/history}` and recognizes both canonical `citeanything.app` links and `[@ev:TOKEN]` markers.
 
-### Ask about save location during setup
+For a standalone skill installation, register `hooks/save-history.sh` manually only if the host supports Claude Code-style Stop hooks. Ask where the user wants local history before enabling it. A custom location must be set persistently in the environment that launches the host:
 
-**Before finishing hook setup, always ask the user:** "Where would you like history files saved? The default is `~/.citeanything/history/`. On Windows that resolves to `C:\Users\<you>\.citeanything\history\` — some users prefer a different drive."
-
-If they want to customize, set the `CITEANYTHING_HISTORY_DIR` env var **persistently** (so it survives across Claude Code restarts) according to their platform:
-
-**macOS / Linux** — append to shell rc file:
 ```bash
-echo 'export CITEANYTHING_HISTORY_DIR="$HOME/Documents/citeanything-history"' >> ~/.zshrc
-# or ~/.bashrc depending on their shell
+export CITEANYTHING_HISTORY_DIR="$HOME/Documents/citeanything-history"
 ```
 
-**Windows (Git Bash)** — append to `.bashrc`:
-```bash
-echo 'export CITEANYTHING_HISTORY_DIR="/d/citeanything-history"' >> ~/.bashrc
-```
-
-**Windows (PowerShell, permanent)** — run once:
-```powershell
-[Environment]::SetEnvironmentVariable("CITEANYTHING_HISTORY_DIR", "D:\citeanything-history", "User")
-```
-
-**Important:** After setting the env var, tell the user to **fully restart Claude Code** (not just reload plugins) for the new path to take effect. Hooks are subprocesses of Claude Code and inherit the environment Claude Code started with — an env var set in the middle of a session won't propagate.
-
-Without this variable, the default is `~/.citeanything/history`. The directory is created automatically if it doesn't exist.
-
-### Changing the save location later
-
-If the user says something like "I want to change where citeanything history is saved" after initial setup, follow the same platform-specific steps above, then remind them to restart Claude Code.
-
-> **Security note:** Never ask the user for their password. The API key should be generated by the user through the web interface.
+Restart the host after changing persistent environment variables. Local history is a convenience copy; CiteAnything remains the source of truth for its own cloud conversations and Works.

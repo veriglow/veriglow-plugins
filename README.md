@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Take CiteAnything home with you.</strong><br>
-  Verifiable citations and data extraction recipes, for any AI agent you use.
+  Verifiable citations, durable cited Works, and data extraction recipes for any AI agent you use.
 </p>
 
 ---
@@ -34,9 +34,11 @@ Restart Claude Code. Then type `/` to verify `citeanything` and `agentmap` are a
 
 **What's included:**
 
-- **[CiteAnything](https://github.com/veriglow/citeanything-skill)** skill — create verifiable citations for every claim, with clickable source links that open highlighted evidence
+- **[CiteAnything](https://github.com/veriglow/citeanything-skill)** skill — create replayable citations and build cited HTML, PPTX, PDF, Markdown, and other durable Works
 - **[AgentMap](https://github.com/veriglow/agentmap-skill)** skill — look up data-extraction recipes for any website (internal APIs, selectors, automation steps)
-- **Auto-save hook** — every response and its citations are automatically saved to `~/.citeanything/history/` (no manual config needed)
+- **Auto-save hook** — cited Claude Code responses are saved to `~/.citeanything/history/` (no manual config needed)
+
+CiteAnything now separates credentials by responsibility: the Skill Key creates citations and reads the private KB, the SyncAnything Key provides read-only indexing, and the CLI/TUI Key owns conversations, agent runs, and Work synchronization.
 
 ---
 

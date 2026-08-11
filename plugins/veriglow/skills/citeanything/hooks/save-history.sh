@@ -2,7 +2,7 @@
 # CiteAnything — Stop hook: save Q&A + citations after each response
 #
 # Reads Claude Code transcript, extracts latest user question + Claude answer,
-# and any citeanything.veri-glow.com/e/* URLs, then saves to
+# and any CiteAnything citation links or markers, then saves to
 # ~/.citeanything/history/{timestamp}.md
 
 set -e
@@ -99,7 +99,13 @@ except Exception:
 if not assistant_msg:
     sys.exit(0)
 
-urls = re.findall(r"https://citeanything\.veri-glow\.com/e/[A-Za-z0-9_-]+", assistant_msg)
+urls = re.findall(
+    r"https://(?:citeanything\.app|citeanything\.cn|citeanything\.veri-glow\.com)/e/[A-Za-z0-9_-]+",
+    assistant_msg,
+)
+markers = re.findall(r"\[@ev:([A-Za-z0-9_-]+)\]", assistant_msg)
+base_url = os.environ.get("CITEANYTHING_BASE_URL", "https://citeanything.app").rstrip("/")
+urls.extend(f"{base_url}/e/{token}" for token in markers)
 unique_urls = list(dict.fromkeys(urls))
 
 if not unique_urls:
