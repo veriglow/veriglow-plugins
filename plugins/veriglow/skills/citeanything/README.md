@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://brand.veri-glow.com/logo-green-transparent.svg" width="80" alt="VeriGlow Logo" />
+  <img src="https://brand.veri-glow.com/favicon.svg" width="80" alt="VeriGlow Logo" />
 </p>
 
 <h1 align="center">CiteAnything</h1>
