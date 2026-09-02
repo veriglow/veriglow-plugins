@@ -11,6 +11,11 @@
 
 ---
 
+> [!WARNING]
+> This repository is the legacy Claude Code bundle that combined CiteAnything and AgentMap. New CiteAnything distribution has moved to [`veriglow/citeanything-plugin`](https://github.com/veriglow/citeanything-plugin), where the portable Skill + MCP package and per-host adapters are maintained. Existing users may keep this bundle for compatibility, but new CiteAnything installations should use the standalone repository.
+
+---
+
 ## Choose your setup
 
 Pick the path that matches your AI agent:
